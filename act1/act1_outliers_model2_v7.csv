@@ -1,0 +1,2 @@
+binomial,EQ_residual,EQ_z,temp_mean_C,temp_source,BMR_z,lon_z,maha,p_fdr,outlier
+Homo sapiens,0.8511674081889034,2.654488332895948,-5,manual_glacial_niche,0.7039,2.4277,23.2861868755475,0.0025529949237615606,TRUE

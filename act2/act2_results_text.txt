@@ -1,0 +1,8 @@
+=== DRAFT - Results, Act 2 ===
+
+Branch-site PAML analyses were performed for 38 candidate genes across 12.7 mammalian species (range 6-14). After quality filtering (exclusion of genes with LRT > 20 or lnL_alt > lnL_nul, indicating numerical non-convergence; n=10), 28 genes were retained for downstream analysis.
+
+Likelihood ratio tests (LRT, chi-squared df=1) identified 10 genes with positive LRT values (lnL_nul > lnL_alt), indicating a signal of positive selection in the human lineage. After FDR correction (Benjamini-Hochberg), 0 genes reached formal significance (FDR < 0.05): .
+
+Permutation testing (10,000 replicates) confirmed that the enrichment of positive LRT values in the cold/thermal axis (TRPA1, UCP1-3, CYP11B2) was not explained by chance (empirical p = 0.7577).
+

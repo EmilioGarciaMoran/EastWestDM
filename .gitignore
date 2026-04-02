@@ -1,17 +1,17 @@
-# Resultados grandes y figuras (pero versionaremos los CSV pequeños)
-act1/*.png
-act1/*.pdf
-act1/*.log
-act2/
-act3/
-logs/
-aws/*.pem
-aws/*.csv
-aws/*.env
-aws/credentials*
+# Datos pesados
 data/PanTHERIA_1-0_WR05_Aug2008.txt
-data/combined_mammal_pes.csv
-.Rproj.user
-.Rhistory
-.RData
-.DS_Store
+data/EQ_residual_v2.tsv
+
+# Claves AWS — NUNCA al repo
+aws/*.pem
+aws/credentials
+aws/credentials.backup
+aws/egarmo_accessKeys.csv
+aws/egarmo_accessKeys.csv.backup
+
+# Logs
+logs/
+*.log
+
+# Resultados intermedios
+act2/paml_lrt_raw.csv

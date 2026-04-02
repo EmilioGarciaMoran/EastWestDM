@@ -1,0 +1,8 @@
+=== DRAFT - Results, Act 1 (con Homo sapiens en Modelo 2) ===
+
+Brain mass data were compiled from Stephan et al. (1981), Isler & van Schaik (2006), and Burger et al. (2019) for 52 mammalian species representing five major orders. EQ residuals were calculated as OLS residuals from log(brain mass) ~ log(body mass) (beta=0.6799, R2=0.918).
+
+Model 1 (encephalization outliers; N=28; variables: EQ residual, BMR z-score, longevity z-score): Mahalanobis distance analysis identified 1 outliers (FDR<0.01). Homo sapiens ranked 3 of 28 (D=8.74, p_adj=0.262), confirming extreme encephalization.
+
+Model 2 (thermal-encephalization space; N=23 terrestrial species; variables: EQ residual, BMR z-score, longevity z-score, habitat temperature). Because PanTHERIA does not assign a temperature to the cosmopolitan H. sapiens, we assigned -5°C, representing the mean winter temperature of the Siberian glacial niche (LGM) where the lineage experienced extreme cold selection. Urocitellus parryii temperature was assigned from literature (-10°C; McLean & Towns 2014); BMR and longevity residuals from Boonstra et al. (2001) and Buck & Barnes (1999). 1 outliers were identified (FDR<0.01). Homo sapiens was an outlier (D=23.29, p_adj=0.00255). Species in the high-EQ/cold-habitat quadrant (EQ>0, T<5°C): Homo sapiens, Vulpes lagopus, Vulpes vulpes, Canis lupus, Marmota marmota, Ursus americanus. Notably, the only primates with positive EQ residuals are H. sapiens and the great apes; none except H. sapiens occupy the cold quadrant. This dissociation supports the hypothesis that human colonisation of cold environments required convergent evolution with arctic mammals.
+

@@ -102,22 +102,92 @@ Acto 3 — ¿Cómo se polariza esa señal entre linajes arcaicos y modernos?
 
 ---
 
-## ACTO 3 — Polarización Este-Oeste (pendiente)
+## ACTO 2 — Mejoras pendientes (roadmap)
+
+Basado en revisión crítica externa (DeepSeek, Abril 2026):
+
+1. **RELAX (HyPhy)** sobre top-20 genes de yn00 — detecta si la intensidad de selección ha cambiado específicamente en la rama humana (K>1 = intensificación, K<1 = relajación). Más robusto que PAML branch-site para este propósito. Complementario a aBSREL para selección positiva directa.
+2. **phyloP de Zoonomia** (UCSC Table Browser) como validación externa de aceleración — independiente de nuestros alineamientos.
+3. **GWAS Catalog / T2D Knowledge Portal** — cruzar top genes con variantes asociadas a diabetes tipo 2 en poblaciones AMR y EAS.
+4. **Nota sobre circularidad:** Los 79 genes fueron seleccionados de rutas KEGG (hsa00010 glucólisis, hsa04910 insulina, hsa04714 termogénesis) — criterio agnóstico respecto al fenotipo de diabetes. Documentar explícitamente en Métodos.
+5. **yn00 no es branch-specific** — un ω elevado en *H. sapiens* vs *Ursus* refleja divergencia acumulada en cualquiera de las dos ramas. RELAX o aBSREL son necesarios para atribuir la aceleración específicamente a la rama humana.
+
+---
+
+## ACTO 3 — Polarización Este-Oeste (en diseño)
 
 ### Pregunta
-¿Las firmas de selección del Acto 2 se polarizan entre los linajes arcaicos de forma consistente con la hipótesis East-West?
+¿Las firmas de selección del Acto 2 se polarizan entre linajes arcaicos y se proyectan en las poblaciones humanas actuales de forma consistente con la hipótesis East-West?
 
-### Plan
-1. Obtener VCFs de:
-   - Sima de los Huesos (hg38, low-cov, ENA/MPI-EVA)
-   - Vindija 33.19 (Neandertal europeo)
-   - Altai Denisova
-   - Ust'-Ishim (Siberia, ~45 kyr)
-2. Polarizar variantes en los genes del top-10 Acto 2 (especialmente PKM, LDHA, PFKM, PPARGC1A)
-3. Cruzar con gnomAD v4 (subpoblaciones AMR, EUR, EAS, AFR)
-4. Test D-statistic (ABBA-BABA) para confirmar estructura poblacional
+### 3A — simaFive: pileup de los 5 individuos de Sima de los Huesos
 
-**Predicción:** Los alelos de alta ω en PKM y PFKM estarán presentes en la Sima/Vindija (Western) y ausentes o minoritarios en Denisova/Ust'-Ishim (Eastern), o viceversa para los genes del eje frío extremo ártico.
+Los 5 genomas disponibles tienen cobertura individual ~0.5-1x — insuficiente para genotipado individual fiable. Sin embargo, para inferencia de **presencia/ausencia alélica a nivel poblacional**, el pileup agregado es metodológicamente válido.
+
+**Justificación:** Los 5 individuos son contemporáneos (~430 kyr), pertenecen a la misma población, y lo que se busca no es el genotipo de un individuo sino si el alelo estaba presente en ese linaje. Con 5×1x = ~5x efectivo en zonas solapantes, es posible llamar alelos presentes con frecuencia >30% con confianza razonable.
+
+Protocolo simaFive:
+```bash
+# 1. Merge de los 5 BAMs (ENA PRJEB9021)
+samtools merge sima_merged.bam sima_ind1.bam sima_ind2.bam \
+    sima_ind3.bam sima_ind4.bam sima_ind5.bam
+samtools index sima_merged.bam
+
+# 2. Pileup sobre regiones de genes top-10
+samtools mpileup \
+    -f hg38.fa \
+    -l top10_genes_hg38.bed \
+    -q 30 -Q 20 \
+    --rf PROPER_PAIR \
+    sima_merged.bam > sima_merged.pileup
+
+# 3. Filtro: incluir solo genes con cobertura media >= 3x
+awk '$4 >= 3' sima_merged.pileup > sima_filtered.pileup
+```
+
+Criterios de inclusión/exclusión:
+- **Incluir:** cobertura media ≥ 3x → análisis de presencia alélica válido
+- **Excluir:** cobertura media < 3x → documentar en suplemento
+- Filtro de deaminación: excluir C→T en primeros/últimos 5bp de cada read
+- Llamar solo variantes presentes en ≥ 2 reads independientes
+
+Texto para Métodos del paper:
+> *"Given the low individual coverage of Sima de los Huesos specimens (~0.5-1x per individual), we merged all five available BAM files to obtain a composite pileup with effective coverage of 3-5x per locus. Genes with mean coverage < 3x in the merged pileup were excluded from downstream analysis (n=X). This approach is appropriate for population-level allele presence/absence inference but precludes individual genotyping."*
+
+### 3B — Arcaicos comparados
+
+| Espécimen | Cobertura | Linaje | Fuente ENA |
+|-----------|-----------|--------|------------|
+| Sima de los Huesos (×5, merged) | ~3-5x efectivo | Pre-Neandertal Western | PRJEB9021 |
+| Vindija 33.19 | ~30x | Neandertal europeo | ENA |
+| Altai Denisova | ~30x | Denisovano | ENA |
+| Ust'-Ishim | ~42x | Sapiens Siberiano (~45 kyr) | ENA |
+
+### 3C — Proyección en gnomAD v4
+
+Objetivo: demostrar que las firmas evolutivas del Acto 2 tienen correlatos medibles en la distribución actual de variantes humanas.
+
+Poblaciones clave:
+- **NFE** (Non-Finnish European) → proxy Western
+- **EAS** (East Asian) → proxy Eastern
+- **AMR** (Latino/Admixed American) → proxy Eastern con mezcla reciente
+- **AFR** (African) → outgroup basal
+
+Análisis:
+1. Extraer frecuencias alélicas de variantes no sinónimas en top-10 genes para NFE, EAS, AMR, AFR
+2. Calcular odds ratio (OR) EAS/AMR vs NFE para cada variante
+3. Definir "alelo Oriental" si OR > 2, presente en AMR/EAS, raro en NFE
+4. Cruzar con GWAS Catalog y T2D Knowledge Portal — ¿asociados a T2D en AMR/EAS?
+5. Visualización: scatter frecuencia AMR vs EUR — buscar alelos "diagnósticos" en las esquinas
+
+**Predicción principal:** Los alelos de alta ω en PKM, PFKM y PPARGC1A serán más frecuentes en EAS/AMR que en NFE. SLC5A2 mostrará distribución uniforme (gen bajo purificación, sin polarización).
+
+### 3D — Test D-statistic (ABBA-BABA)
+
+Para confirmar estructura poblacional en los loci candidatos:
+- Topología: (Pan, Sima; Vindija, Denisova)
+- Genes top-10 Acto 2 como ventanas de análisis
+- Z-score > 3 como umbral de significancia
+- Herramienta: ANGSD -doAbbababa2
 
 ---
 

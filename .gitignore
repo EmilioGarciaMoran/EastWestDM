@@ -39,3 +39,18 @@ act2/cds/
 # Temporales
 data/Rplots.pdf
 run_act2_complete.sh
+scripts/__pycache__/
+scripts/run_yn00_eastwest.py
+scripts/yn00_simple.py
+act2/yn00_results/tmp/
+act2/yn00_results/checkpoint_yn00.json
+act2/yn00_results/ckpt_final.json
+act2/yn00_results/dnds_yn00_raw.csv
+2YN.dN
+2YN.dS
+2YN.t
+rst
+rst1
+rub
+yn
+yn00.ctl

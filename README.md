@@ -119,48 +119,82 @@ Basado en revisión crítica externa (DeepSeek, Abril 2026):
 ### Pregunta
 ¿Las firmas de selección del Acto 2 se polarizan entre linajes arcaicos y se proyectan en las poblaciones humanas actuales de forma consistente con la hipótesis East-West?
 
-### 3A — simaFive: pileup de los 5 individuos de Sima de los Huesos
+### 3A — Dataset de especímenes arcaicos
 
-Los 5 genomas disponibles tienen cobertura individual ~0.5-1x — insuficiente para genotipado individual fiable. Sin embargo, para inferencia de **presencia/ausencia alélica a nivel poblacional**, el pileup agregado es metodológicamente válido.
+Dataset completo ordenado cronológicamente:
 
-**Justificación:** Los 5 individuos son contemporáneos (~430 kyr), pertenecen a la misma población, y lo que se busca no es el genotipo de un individuo sino si el alelo estaba presente en ese linaje. Con 5×1x = ~5x efectivo en zonas solapantes, es posible llamar alelos presentes con frecuencia >30% con confianza razonable.
+| Espécimen | Abrev. | Edad | Linaje | Cobertura | Estrategia análisis |
+|-----------|--------|------|--------|-----------|---------------------|
+| Altai Neandertal (D5) | D5 | ~118 ka | Neandertal Altai | 52x | SNPs targeted + full |
+| Chagyrskaya 8 | Chag8 | ~77 ka | Neandertal Altai | 27x | SNPs targeted + full |
+| Denisova 3 | D3 | ~205 ka | Denisovano | ~30x | SNPs targeted + full |
+| Denisova 17 | D17 | ~110 ka | Denisovano | 37x | SNPs targeted + full |
+| Denisova 25 | D25 | — | Denisovano | 31x | SNPs targeted |
+| Vindija 33.19 | Vi33.19 | ~49 ka | Neandertal europeo | 30x | SNPs targeted + full |
+| Goyet 1 | GN1 | ~40 ka | Neandertal occidental | 22x | SNPs targeted |
+| Ust'-Ishim | N/A | ~65 ka | Sapiens siberiano | 42x | **CORE — smoking gun** |
+| Loschbour | N/A | ~10 ka | Sapiens europeo temprano | 24x | SNPs targeted |
+| Stuttgart LBK | N/A | ~7 ka | Sapiens agrícola europeo | 19x | SNPs targeted |
+| **Sima de los Huesos (×5)** | simaFive | ~430 ka | Pre-Neandertal Western | ~3-5x merged | Targeted SNPs only |
+| **El Sidrón (×13)** | sidronMerge | ~49 ka | Neandertal ibérico | ~3-5x merged | Targeted SNPs only |
 
-Protocolo simaFive:
+Fuente: Prüfer et al. 2014, 2017; Mafessoni et al. 2020; Meyer et al. 2016; Fu et al. 2014; Lazaridis et al. 2016; ENA PRJEB9021
+
+### 3B — Estrategia de SNPs informativos targeted
+
+**Insight clave:** La baja cobertura de Sima (~430 ka, 5 individuos) y El Sidrón (~49 ka, 13 individuos) no impide el análisis si se focaliza en posiciones específicas altamente informativas en lugar de explorar todo el gen.
+
+**Protocolo targeted SNP:**
+
+Paso 1 — Seleccionar SNPs informativos desde gnomAD (Fst AMR/EAS vs NFE > 0.3):
 ```bash
-# 1. Merge de los 5 BAMs (ENA PRJEB9021)
-samtools merge sima_merged.bam sima_ind1.bam sima_ind2.bam \
-    sima_ind3.bam sima_ind4.bam sima_ind5.bam
-samtools index sima_merged.bam
-
-# 2. Pileup sobre regiones de genes top-10
-samtools mpileup \
-    -f hg38.fa \
-    -l top10_genes_hg38.bed \
-    -q 30 -Q 20 \
-    --rf PROPER_PAIR \
-    sima_merged.bam > sima_merged.pileup
-
-# 3. Filtro: incluir solo genes con cobertura media >= 3x
-awk '$4 >= 3' sima_merged.pileup > sima_filtered.pileup
+# Ejemplo: PKM rs3024994 → AFR=0.02, NFE=0.05, AMR=0.45, EAS=0.38
+# Estos SNPs discriminan perfectamente Eastern vs Western
+# Crear BED con solo esas posiciones exactas
+echo -e "chr15	72044768	72044769	PKM_rs3024994" > snps_informative.bed
 ```
 
-Criterios de inclusión/exclusión:
-- **Incluir:** cobertura media ≥ 3x → análisis de presencia alélica válido
-- **Excluir:** cobertura media < 3x → documentar en suplemento
-- Filtro de deaminación: excluir C→T en primeros/últimos 5bp de cada read
-- Llamar solo variantes presentes en ≥ 2 reads independientes
+Paso 2 — Pileup targeted en Sima/Sidrón merged:
+```bash
+# simaFive
+samtools merge sima_merged.bam sima_ind*.L35MQ30.bam
+samtools index sima_merged.bam
 
-Texto para Métodos del paper:
-> *"Given the low individual coverage of Sima de los Huesos specimens (~0.5-1x per individual), we merged all five available BAM files to obtain a composite pileup with effective coverage of 3-5x per locus. Genes with mean coverage < 3x in the merged pileup were excluded from downstream analysis (n=X). This approach is appropriate for population-level allele presence/absence inference but precludes individual genotyping."*
+# sidronMerge
+samtools merge sidron_merged.bam sidron_ind*.L35MQ30.bam
+samtools index sidron_merged.bam
 
-### 3B — Arcaicos comparados
+# Pileup SOLO en SNPs informativos
+for BAM in sima_merged.bam sidron_merged.bam vindija.bam ust_ishim.bam; do
+    samtools mpileup         -f hg38.fa         -l snps_informative.bed         -q 25 -Q 20         --rf PROPER_PAIR         $BAM > ${BAM%.bam}_targeted.pileup
+done
+```
 
-| Espécimen | Cobertura | Linaje | Fuente ENA |
-|-----------|-----------|--------|------------|
-| Sima de los Huesos (×5, merged) | ~3-5x efectivo | Pre-Neandertal Western | PRJEB9021 |
-| Vindija 33.19 | ~30x | Neandertal europeo | ENA |
-| Altai Denisova | ~30x | Denisovano | ENA |
-| Ust'-Ishim | ~42x | Sapiens Siberiano (~45 kyr) | ENA |
+Paso 3 — Interpretación:
+- ≥1 read con alelo ancestral → consistente con Western
+- ≥1 read con alelo derivado Eastern → señal Eastern presente
+- 0 reads → "insufficient coverage at this locus" (documentar, no inferir)
+
+**Texto para Métodos:**
+> *"For low-coverage specimens (Sima de los Huesos, n=5, ~0.5-1x per individual; El Sidrón, n=13, ~0.3-0.5x per individual), we merged all available BAM files and performed targeted pileup analysis restricted to 12 highly informative SNPs (gnomAD AMR/EAS vs NFE Fst > 0.3) in top candidate genes. This approach is appropriate for allele presence/absence inference at pre-selected informative positions but precludes genome-wide variant calling."*
+
+**Predicción y narrativa temporal:**
+
+```
+430 ka  Sima de los Huesos  → ancestral/Western (pre-adaptación Eastern)
+ 49 ka  El Sidrón           → Western (neandertal ibérico)
+ 49 ka  Vindija 33.19       → Western (neandertal europeo, alta cobertura)
+ 77 ka  Chagyrskaya         → Western? (neandertal Altai, a confirmar)
+205 ka  Denisova 3          → ??? (clave: ¿tiene ya alelos Eastern?)
+ 65 ka  Ust'-Ishim          → EASTERN (sapiens siberiano — smoking gun)
+ 10 ka  Loschbour           → Western (sapiens europeo post-glacial)
+  7 ka  Stuttgart LBK       → Western (sapiens agrícola europeo)
+```
+
+Si Denisova 3 → ancestral Y Ust'-Ishim → derivado Eastern:
+**La adaptación Eastern ocurrió en sapiens modernos entre ~200 ka y ~65 ka, probablemente como selección positiva rápida bajo presión de frío extremo siberiano. Convergente con zorro ártico y oso polar pero sin millones de años de refinamiento — una solución chapucera que hoy causa diabetes en Jalisco.**
+
+### 3C — Arcaicos de alta cobertura: pipeline completo
 
 ### 3C — Proyección en gnomAD v4
 

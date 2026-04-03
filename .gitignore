@@ -15,3 +15,27 @@ logs/
 
 # Resultados intermedios
 act2/paml_lrt_raw.csv
+# Ficheros Sima reutilizados — no pertenecen a este repo
+aws/launch_sima_*.sh
+aws/monitor_*.sh
+aws/recover_*.sh
+aws/user_data_production*.sh
+aws/user_data_bootstrap.sh
+aws/unitTest/
+aws/ARQUITECTURA-LIMPIEZA.txt
+aws/GoodPractice.md
+aws/README-PIPELINE-CLEANUP.md
+aws/README.md
+aws/SOLUCION-ERROR-SRA.md
+aws/UNIT-TEST-MANUAL-SSH.md
+aws/config.env
+aws/instance_id_*.txt
+aws/ip_*.txt
+aws/launch_rerconverge.sh
+
+# Datos CDS en local (pesados, están en S3)
+act2/cds/
+
+# Temporales
+data/Rplots.pdf
+run_act2_complete.sh

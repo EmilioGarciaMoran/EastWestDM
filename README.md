@@ -194,7 +194,50 @@ Paso 3 — Interpretación:
 Si Denisova 3 → ancestral Y Ust'-Ishim → derivado Eastern:
 **La adaptación Eastern ocurrió en sapiens modernos entre ~200 ka y ~65 ka, probablemente como selección positiva rápida bajo presión de frío extremo siberiano. Convergente con zorro ártico y oso polar pero sin millones de años de refinamiento — una solución chapucera que hoy causa diabetes en Jalisco.**
 
-### 3C — Arcaicos de alta cobertura: pipeline completo
+### 3C — Gradiente temporal Este-Oeste: la narrativa central
+
+Esta es la **Figura 3 del paper** — el argumento visual completo:
+
+| Población | Región | Edad (ka) | Linaje | Estado metabólico predicho |
+|-----------|--------|-----------|--------|---------------------------|
+| Sima de los Huesos | Burgos, España | ~430 | Pre-Neandertal Western | **Ancestral neutro** — sin alelos Eastern ni Western establecidos |
+| Altai Neandertal D5/D17 | Siberia | ~118-110 | Neandertal Oriental | **Oriental primitivo** — aislamiento, Ne pequeño, mezcla denisovana |
+| Chagyrskaya 8 | Siberia | ~77 | Neandertal Occidental derivado | Reemplazó a orientales — ¿transición? |
+| El Sidrón | Asturias, España | ~49 | Neandertal Occidental | **Pre-adaptación Western** — SLC5A2 ancestral, sin Eastern |
+| Vindija 33.19 | Croacia | ~49 | Neandertal Occidental | **Western establecido** — referencia de alta cobertura |
+| Denisova 3 | Siberia | ~205 | Denisovano | **??? clave** — ¿ya tiene alelos Eastern? |
+| Ust'-Ishim | Siberia | ~65 | Sapiens siberiano | **SMOKING GUN Eastern** — adaptación rápida chapucera |
+| Loschbour | Luxemburgo | ~10 | Sapiens europeo | Western moderno temprano |
+| Stuttgart LBK | Alemania | ~7 | Sapiens agrícola | Western moderno |
+| gnomAD NFE | Europa actual | 0 | Sapiens moderno | Western fijado |
+| gnomAD EAS/AMR | Asia/América | 0 | Sapiens moderno | **Eastern fijado → T2D en Jalisco** |
+
+**La predicción testable:**
+- Alelos Eastern (PKM derivado, PPARGC1A termogénico, SLC16A11) → presentes en Ust'-Ishim, frecuentes en EAS/AMR, ausentes en Vindija/El Sidrón/Sima
+- Alelos Western (SLC5A2 conservado, umbral renal) → presentes en Vindija, consistentes en El Sidrón/Sima, raros en EAS/AMR
+
+**El argumento narrativo para el paper:**
+> *"Los alelos que hoy causan diabetes en Jalisco no son un error moderno — son una adaptación de emergencia fijada en sapiens siberianos entre ~200 ka y ~65 ka, convergente con la evolución del zorro ártico y el oso polar, pero sin los millones de años de refinamiento de esos linajes. Esta 'solución chapucera' funcionó perfectamente en el Pleistoceno siberiano. Hoy, expuesta a dieta occidental y calor en México, colapsa el sistema metabólico."*
+
+### 3D — Convergencia ártica: mamíferos boreales como validación
+
+Objetivo: demostrar que los mismos genes bajo selección en humanos (Acto 2) también están acelerados en linajes árticos independientes → convergencia evolutiva.
+
+Comparaciones clave:
+| Gen | Ártico | Templado (control) | Predicción |
+|-----|--------|---------------------|------------|
+| PPARGC1A | Oso polar (*U. maritimus*) | Oso pardo (*U. arctos*) | ω polar > ω pardo |
+| TRPA1 | Zorro ártico (*V. lagopus*) | Zorro rojo (*V. vulpes*) | ω ártico > ω rojo |
+| UCP1 | Reno (*Rangifer tarandus*) | Ciervo (*Cervus elaphus*) | ω reno > ω ciervo |
+| PKM | Oso polar | Oso pardo | ω polar > ω pardo |
+
+Método: yn00 pairwise (ya funciona en local) sobre CDS descargados de NCBI/Ensembl.
+Script: `scripts/yn00_eastwest_final.py` — añadir estas especies al config.
+
+**Si PPARGC1A muestra ω > 1 en oso polar y ω < 0.5 en oso pardo → convergencia demostrada.**
+Eso cierra el círculo: la misma presión ambiental (frío extremo) seleccionó los mismos genes en linajes independientes — humanos siberianos, zorros árticos, osos polares.
+
+### 3E — Arcaicos de alta cobertura: pipeline completo
 
 ### 3C — Proyección en gnomAD v4
 

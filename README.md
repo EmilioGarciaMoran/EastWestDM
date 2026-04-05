@@ -345,3 +345,10 @@ El análisis yn00 no es equivalente al branch-site de PAML — no detecta selecc
 ---
 
 *"No estamos describiendo fósiles. Estamos diagnosticando a sus descendientes."*
+
+## Preprint
+
+García-Morán E. Paleogenomic Evidence for Two Independent Metabolic Architectures 
+Underlying Ethnic Disparities in Type 2 Diabetes: An East-West Axis Traced Through 
+430,000 Years of Hominin Evolution. Zenodo. 2026. 
+DOI: 10.5281/zenodo.19431147

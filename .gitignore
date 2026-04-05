@@ -54,3 +54,9 @@ rst1
 rub
 yn
 yn00.ctl
+act2/yn00_results/tmp/
+act2/cds/
+data/PanTHERIA_1-0_WR05_Aug2008.txt
+act2/yn00_results/ckpt_final.json
+act2/yn00_results/checkpoint_yn00.json
+act2/yn00_results/dnds_yn00_raw.csv

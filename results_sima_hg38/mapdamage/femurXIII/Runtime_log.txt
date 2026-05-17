@@ -1,0 +1,9 @@
+2026-05-17 06:00:15,841	INFO	main: Started with the command: /usr/bin/mapDamage -i results/bam_hg38/femurXIII.hg38.sorted.bam -r /data/ref/hg38.fa -d results/mapdamage/femurXIII --rescale
+2026-05-17 06:00:24,534	DEBUG	main: BAM read in 10.536499 seconds
+2026-05-17 06:00:56,648	INFO	mapdamage.rscript: Performing Bayesian estimates
+2026-05-17 06:00:56,648	DEBUG	mapdamage.rscript: Call: Rscript /usr/lib/python3/dist-packages/mapdamage/Rscripts/stats/runGeneral.R --args 30 10000 10 50000 0 0 1 1 0 0 1 12 results/mapdamage/femurXIII/ /usr/lib/python3/dist-packages/mapdamage/Rscripts/stats/ results/mapdamage/femurXIII/Stats_out 0 0 0 results/mapdamage/femurXIII/acgt_ratio.csv 0 0
+2026-05-17 06:05:25,887	DEBUG	mapdamage.rscript: Bayesian estimates completed in 269.239023 seconds
+2026-05-17 06:05:25,887	INFO	mapdamage.rescale: Rescaling BAM: 'results/bam_hg38/femurXIII.hg38.sorted.bam' -> 'results/mapdamage/femurXIII/femurXIII.hg38.sorted.rescaled.bam'
+2026-05-17 06:05:45,968	DEBUG	mapdamage.rescale: Rescaling completed in 20.081262 seconds
+2026-05-17 06:05:45,969	INFO	main: Successful run
+2026-05-17 06:05:45,969	DEBUG	main: Run completed in 331.970971 seconds

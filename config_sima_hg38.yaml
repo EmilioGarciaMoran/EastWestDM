@@ -1,0 +1,12 @@
+# config_sima_hg38.yaml
+# East-West Diabetes Story — mapDamage + remapeo hg38
+
+# Referencia hg38 (descargar si no está en la instancia)
+hg38_fasta: "/data/ref/hg38.fa"
+
+# S3
+s3_bucket: "sima-egarmo-2026"
+s3_prefix: "sima_hg38"
+
+# Threads por defecto
+threads: 8

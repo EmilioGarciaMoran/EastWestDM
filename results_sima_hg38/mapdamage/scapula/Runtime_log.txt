@@ -1,0 +1,9 @@
+2026-05-17 06:00:16,171	INFO	main: Started with the command: /usr/bin/mapDamage -i results/bam_hg38/scapula.hg38.sorted.bam -r /data/ref/hg38.fa -d results/mapdamage/scapula --rescale
+2026-05-17 06:00:29,925	DEBUG	main: BAM read in 15.962073 seconds
+2026-05-17 06:01:08,873	INFO	mapdamage.rscript: Performing Bayesian estimates
+2026-05-17 06:01:08,873	DEBUG	mapdamage.rscript: Call: Rscript /usr/lib/python3/dist-packages/mapdamage/Rscripts/stats/runGeneral.R --args 30 10000 10 50000 0 0 1 1 0 0 1 12 results/mapdamage/scapula/ /usr/lib/python3/dist-packages/mapdamage/Rscripts/stats/ results/mapdamage/scapula/Stats_out 0 0 0 results/mapdamage/scapula/acgt_ratio.csv 0 0
+2026-05-17 06:07:06,572	DEBUG	mapdamage.rscript: Bayesian estimates completed in 357.698629 seconds
+2026-05-17 06:07:06,572	INFO	mapdamage.rescale: Rescaling BAM: 'results/bam_hg38/scapula.hg38.sorted.bam' -> 'results/mapdamage/scapula/scapula.hg38.sorted.rescaled.bam'
+2026-05-17 06:07:16,292	DEBUG	mapdamage.rescale: Rescaling completed in 9.720511 seconds
+2026-05-17 06:07:16,293	INFO	main: Successful run
+2026-05-17 06:07:16,293	DEBUG	main: Run completed in 422.329671 seconds

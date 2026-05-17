@@ -1,0 +1,381 @@
+# =============================================================================
+# Snakefile: Sima de los Huesos — remapeo hg38 + mapDamage
+# East-West Diabetes Story — validación aDNA LDHA/LDHC
+# Stack: sima-egarmo-2026 / eu-west-1
+# Instancia recomendada: c5.2xlarge Spot (~$0.07/h)
+# Tiempo estimado: 6-8h para 5 especímenes nucleares
+#
+# MAPA VERIFICADO contra ENA PRJEB10597 (Meyer et al. 2016):
+#   ERR995358 → incisor.L35MQ30      ← FASTQ ya en S3 (renombrado)
+#   ERR995359 → scapula.L35MQ30      ← descarga ENA
+#   ERR995360 → molar.L35MQ30        ← descarga ENA
+#   ERR995357 → femurXIII.L35MQ30    ← descarga ENA
+#   ERR995361 → femur_fragment.L35MQ30 ← descarga ENA
+#   (ERR995364/365/362/363 = mitocondrial — excluidos)
+# =============================================================================
+
+configfile: "config_sima_hg38.yaml"
+
+# Especímenes nucleares — mapa accession verificado contra ENA
+SAMPLES = {
+    "incisor":        "ERR995358",   # ya en s3://sima-egarmo-2026/fastqs/
+    "scapula":        "ERR995359",   # descarga ENA
+    "molar_L35":      "ERR995360",   # descarga ENA
+    "femurXIII":      "ERR995357",   # descarga ENA — OJO: NO es ERR995358
+    "femur_fragment": "ERR995361",   # descarga ENA
+}
+
+# Especímenes con FASTQ ya disponible en S3 (evita re-descarga del ENA)
+S3_FASTQ_AVAILABLE = {
+    "incisor": "s3://sima-egarmo-2026/fastqs/Sima_incisor_ERR995358.fastq.gz",
+}
+
+# Loci de interés para extracción dirigida post-mapDamage
+# hg38 coords — LDHA/LDHC región + flancos 50kb
+LOCI_OF_INTEREST = {
+    "LDHC": "chr11:18,390,000-18,510,000",   # hg38
+    "LDHA": "chr11:18,680,000-18,730,000",   # hg38
+    "SLC2A3": "chr12:7,870,000-7,930,000",   # hg38 — invariante 430kyr
+}
+
+rule all:
+    input:
+        # 1. BAMs remapeados a hg38 (todos los especímenes)
+        expand("results/bam_hg38/{sample}.hg38.sorted.bam",
+               sample=SAMPLES.keys()),
+        # 2. mapDamage reports
+        expand("results/mapdamage/{sample}/",
+               sample=SAMPLES.keys()),
+        # 3. Loci de interés extraídos
+        expand("results/loci/{sample}/{locus}.bam",
+               sample=SAMPLES.keys(),
+               locus=LOCI_OF_INTEREST.keys()),
+        # 4. VCF consolidado en coordenadas hg38
+        "results/vcf/sima_hg38_loci.vcf.gz",
+        # 5. Reporte de daño por desaminación (para revisores)
+        "results/mapdamage/damage_summary.tsv",
+
+
+# =============================================================================
+# STEP 0: Obtención de FASTQs
+# Prioridad: S3 (si disponible) → ENA FTP
+# incisor (ERR995358) ya está en S3 como Sima_incisor_ERR995358.fastq.gz
+# =============================================================================
+rule download_fastq:
+    output:
+        fq = "data/fastq/{sample}.fastq.gz"
+    params:
+        accession = lambda wc: SAMPLES[wc.sample],
+        s3_uri    = lambda wc: S3_FASTQ_AVAILABLE.get(wc.sample, ""),
+        ena_base  = "https://ftp.sra.ebi.ac.uk/vol1/fastq"
+    log:
+        "logs/download/{sample}.log"
+    shell:
+        """
+        # Intentar S3 primero (más rápido, sin salir a internet)
+        if [ -n "{params.s3_uri}" ]; then
+            echo "Recuperando desde S3: {params.s3_uri}" > {log}
+            aws s3 cp "{params.s3_uri}" {output.fq} \
+                --region eu-west-1 >> {log} 2>&1
+            echo "S3 OK: $(du -sh {output.fq})" >> {log}
+        else
+            # Descarga desde ENA FTP
+            ACC={params.accession}
+            PREFIX=${{ACC:0:6}}
+            SUFFIX=${{ACC: -1}}
+            URL="{params.ena_base}/${{PREFIX}}/00${{SUFFIX}}/${{ACC}}/${{ACC}}.fastq.gz"
+            echo "Descargando ENA: $URL" > {log}
+            wget -q --tries=3 --waitretry=10 -O {output.fq} "$URL" 2>> {log} || \
+            wget -q --tries=3 -O {output.fq} \
+                "https://ftp.sra.ebi.ac.uk/vol1/fastq/${{PREFIX}}/${{ACC}}/${{ACC}}.fastq.gz" \
+                2>> {log}
+            echo "ENA OK: $(du -sh {output.fq})" >> {log}
+        fi
+        # Verificar que el archivo no está vacío ni corrupto
+        [ -s {output.fq} ] || {{ echo "ERROR: FASTQ vacío o ausente" >> {log}; exit 1; }}
+        python3 -c "import gzip; gzip.open('{output.fq}').read(1000)" 2>> {log} || \
+            {{ echo "ERROR: FASTQ corrupto" >> {log}; exit 1; }}
+        """
+
+
+# =============================================================================
+# STEP 1: AdapterRemoval — trim adapters + collapse paired (aDNA short reads)
+# El MPI-EVA genera lecturas muy cortas (~35bp); AdapterRemoval2 es el estándar
+# =============================================================================
+rule trim_adapters:
+    input:
+        fq = "data/fastq/{sample}.fastq.gz"
+    output:
+        collapsed   = "data/trimmed/{sample}.collapsed.gz",
+        truncated   = "data/trimmed/{sample}.truncated.gz",
+        stats       = "data/trimmed/{sample}.settings"
+    params:
+        minlength = 25,       # mínimo para aDNA útil
+        minquality = 20,
+        adapter1   = "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC",  # TruSeq
+        adapter2   = "AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT"
+    threads: 4
+    log: "logs/trim/{sample}.log"
+    shell:
+        """
+        AdapterRemoval \
+            --file1 {input.fq} \
+            --basename data/trimmed/{wildcards.sample} \
+            --gzip \
+            --minlength {params.minlength} \
+            --minquality {params.minquality} \
+            --adapter1 {params.adapter1} \
+            --adapter2 {params.adapter2} \
+            --collapse \
+            --trimns \
+            --trimqualities \
+            --threads {threads} \
+            > {log} 2>&1
+        # Si es single-end (como los de MPI-EVA), renombrar truncated
+        [ -f data/trimmed/{wildcards.sample}.truncated.gz ] || \
+            mv data/trimmed/{wildcards.sample}.singleton.truncated.gz \
+               {output.truncated} 2>/dev/null || touch {output.truncated}
+        """
+
+
+# =============================================================================
+# STEP 2: BWA-MEM mapeo a hg38
+# Parámetros aDNA: -k 16 -n 0.01 (lecturas cortas degradadas)
+# =============================================================================
+rule bwa_map_hg38:
+    input:
+        collapsed = "data/trimmed/{sample}.collapsed.gz",
+        truncated = "data/trimmed/{sample}.truncated.gz",
+        ref       = config["hg38_fasta"]
+    output:
+        bam = temp("results/bam_hg38/{sample}.raw.bam")
+    params:
+        rg = lambda wc: f"@RG\\tID:{wc.sample}\\tSM:Sima_{wc.sample}\\tPL:ILLUMINA\\tLB:Meyer2016"
+    threads: 8
+    log: "logs/bwa/{sample}.log"
+    shell:
+        """
+        # Mapear collapsed (mayoría del aDNA útil) + truncated, luego merge
+        bwa mem \
+            -t {threads} \
+            -k 16 \
+            -n 0.01 \
+            -R "{params.rg}" \
+            {input.ref} \
+            {input.collapsed} \
+            2> {log} | \
+        samtools view -bS -q 25 -F 4 - > results/bam_hg38/{wildcards.sample}.collapsed.bam
+
+        # Truncated (single-end tras colapso)
+        bwa mem \
+            -t {threads} \
+            -k 16 \
+            -n 0.01 \
+            -R "{params.rg}" \
+            {input.ref} \
+            {input.truncated} \
+            2>> {log} | \
+        samtools view -bS -q 25 -F 4 - > results/bam_hg38/{wildcards.sample}.truncated.bam
+
+        samtools merge -f {output.bam} \
+            results/bam_hg38/{wildcards.sample}.collapsed.bam \
+            results/bam_hg38/{wildcards.sample}.truncated.bam 2>> {log}
+
+        rm -f results/bam_hg38/{wildcards.sample}.collapsed.bam \
+              results/bam_hg38/{wildcards.sample}.truncated.bam
+        """
+
+
+# =============================================================================
+# STEP 3: Sort + Deduplication (Picard MarkDuplicates)
+# Para aDNA: remover duplicados PCR es crítico
+# =============================================================================
+rule sort_dedup:
+    input:
+        bam = "results/bam_hg38/{sample}.raw.bam"
+    output:
+        bam     = "results/bam_hg38/{sample}.hg38.sorted.bam",
+        bai     = "results/bam_hg38/{sample}.hg38.sorted.bam.bai",
+        metrics = "results/bam_hg38/{sample}.dedup_metrics.txt"
+    log: "logs/dedup/{sample}.log"
+    shell:
+        """
+        # Sort
+        samtools sort -o results/bam_hg38/{wildcards.sample}.sorted.tmp.bam \
+            {input.bam} 2> {log}
+
+        # Dedup con Picard
+        picard MarkDuplicates \
+            I=results/bam_hg38/{wildcards.sample}.sorted.tmp.bam \
+            O={output.bam} \
+            M={output.metrics} \
+            REMOVE_DUPLICATES=true \
+            VALIDATION_STRINGENCY=LENIENT \
+            >> {log} 2>&1
+
+        samtools index {output.bam}
+        rm -f results/bam_hg38/{wildcards.sample}.sorted.tmp.bam
+        """
+
+
+# =============================================================================
+# STEP 4: mapDamage 2.0
+# Cuantifica deaminación C→T (5') y G→A (3') — firma de aDNA auténtico
+# Output clave para revisores: frecuencias de daño en LDHA/LDHC
+# =============================================================================
+rule mapdamage:
+    input:
+        bam = "results/bam_hg38/{sample}.hg38.sorted.bam",
+        ref = config["hg38_fasta"]
+    output:
+        directory("results/mapdamage/{sample}/")
+    params:
+        # Rescaling reduce el impacto de desaminación en variant calling
+        # Genera misincorporation plots para el paper
+        extra = "--rescale --no-stats"
+    log: "logs/mapdamage/{sample}.log"
+    shell:
+        """
+        mapDamage \
+            -i {input.bam} \
+            -r {input.ref} \
+            -d {output} \
+            {params.extra} \
+            > {log} 2>&1
+        echo "mapDamage completado para {wildcards.sample}" >> {log}
+        """
+
+
+# =============================================================================
+# STEP 4b: BAMs rescalados (post-mapDamage) para variant calling limpio
+# =============================================================================
+rule use_rescaled_bam:
+    input:
+        mapdamage_dir = "results/mapdamage/{sample}/",
+        original_bam  = "results/bam_hg38/{sample}.hg38.sorted.bam"
+    output:
+        bam = "results/bam_rescaled/{sample}.rescaled.bam",
+        bai = "results/bam_rescaled/{sample}.rescaled.bam.bai"
+    log: "logs/rescale/{sample}.log"
+    shell:
+        """
+        # mapDamage genera el rescaled BAM dentro del directorio de output
+        RESCALED=$(ls {input.mapdamage_dir}/*rescaled.bam 2>/dev/null | head -1)
+        if [ -z "$RESCALED" ]; then
+            echo "WARNING: rescaled BAM no encontrado, usando original" > {log}
+            cp {input.original_bam} {output.bam}
+        else
+            cp "$RESCALED" {output.bam}
+            echo "Usando rescaled BAM: $RESCALED" > {log}
+        fi
+        samtools index {output.bam}
+        """
+
+
+# =============================================================================
+# STEP 5: Extracción de loci de interés (LDHA, LDHC, SLC2A3)
+# =============================================================================
+rule extract_loci:
+    input:
+        bam = "results/bam_rescaled/{sample}.rescaled.bam",
+        bai = "results/bam_rescaled/{sample}.rescaled.bam.bai"
+    output:
+        bam = "results/loci/{sample}/{locus}.bam",
+        bai = "results/loci/{sample}/{locus}.bam.bai"
+    params:
+        region = lambda wc: LOCI_OF_INTEREST[wc.locus]
+    log: "logs/loci/{sample}_{locus}.log"
+    shell:
+        """
+        samtools view -b {input.bam} "{params.region}" > {output.bam} 2> {log}
+        samtools index {output.bam}
+        echo "Reads extraídos para {wildcards.locus}: $(samtools flagstat {output.bam} | head -1)" >> {log}
+        """
+
+
+# =============================================================================
+# STEP 6: Variant calling consolidado (GATK HaplotypeCaller en modo GVCF)
+# Todos los especímenes → VCF conjunto en los loci de interés
+# =============================================================================
+rule variant_calling:
+    input:
+        bams = expand("results/bam_rescaled/{sample}.rescaled.bam",
+                      sample=SAMPLES.keys()),
+        ref  = config["hg38_fasta"]
+    output:
+        vcf = "results/vcf/sima_hg38_loci.vcf.gz"
+    params:
+        # Intervalos de los 3 loci
+        intervals = " ".join([f"-L {v}" for v in LOCI_OF_INTEREST.values()])
+    log: "logs/vcf/variant_calling.log"
+    shell:
+        """
+        # Generar GVCF por muestra
+        for BAM in {input.bams}; do
+            SAMPLE=$(basename $BAM .rescaled.bam)
+            gatk HaplotypeCaller \
+                -R {input.ref} \
+                -I $BAM \
+                {params.intervals} \
+                -O results/vcf/${{SAMPLE}}.g.vcf.gz \
+                -ERC GVCF \
+                --sample-ploidy 1 \
+                --max-reads-per-alignment-start 50 \
+                >> {log} 2>&1
+        done
+
+        # GenomicsDBImport + GenotypeGVCFs
+        GVCF_ARGS=$(ls results/vcf/*.g.vcf.gz | sed 's/^/-V /' | tr '\n' ' ')
+        
+        gatk GenomicsDBImport \
+            $GVCF_ARGS \
+            {params.intervals} \
+            --genomicsdb-workspace-path results/vcf/genomicsdb_loci \
+            >> {log} 2>&1
+
+        gatk GenotypeGVCFs \
+            -R {input.ref} \
+            -V gendb://results/vcf/genomicsdb_loci \
+            -O {output.vcf} \
+            >> {log} 2>&1
+        """
+
+
+# =============================================================================
+# STEP 7: Resumen de daño consolidado (tabla para el paper)
+# =============================================================================
+rule damage_summary:
+    input:
+        dirs = expand("results/mapdamage/{sample}/", sample=SAMPLES.keys())
+    output:
+        tsv = "results/mapdamage/damage_summary.tsv"
+    run:
+        import os, csv
+
+        rows = []
+        for d in input.dirs:
+            sample = os.path.basename(d.rstrip("/"))
+            # mapDamage genera misincorporation.txt con frecuencias por posición
+            misc_file = os.path.join(d, "misincorporation.txt")
+            if not os.path.exists(misc_file):
+                continue
+            with open(misc_file) as f:
+                for line in f:
+                    if line.startswith("#") or not line.strip():
+                        continue
+                    parts = line.strip().split("\t")
+                    if len(parts) < 10:
+                        continue
+                    # Columnas estándar mapDamage: Chr Pos End Std Cts ...
+                    # CT_freq en pos 1 de 5' = columna clave para deaminación
+                    rows.append([sample] + parts)
+
+        with open(output.tsv, "w", newline="") as f:
+            writer = csv.writer(f, delimiter="\t")
+            writer.writerow(["sample", "chr", "pos", "end", "std",
+                             "cts", "C_to_T", "G_to_A",
+                             "other_substitutions"])
+            for row in rows[:5000]:  # primeras 5000 líneas suficientes para plot
+                writer.writerow(row[:9])
+
+        print(f"Damage summary: {len(rows)} líneas procesadas")

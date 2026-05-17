@@ -1,0 +1,9 @@
+2026-05-17 06:00:16,227	INFO	main: Started with the command: /usr/bin/mapDamage -i results/bam_hg38/molar_L35.hg38.sorted.bam -r /data/ref/hg38.fa -d results/mapdamage/molar_L35 --rescale
+2026-05-17 06:00:23,649	DEBUG	main: BAM read in 9.658594 seconds
+2026-05-17 06:00:56,749	INFO	mapdamage.rscript: Performing Bayesian estimates
+2026-05-17 06:00:56,749	DEBUG	mapdamage.rscript: Call: Rscript /usr/lib/python3/dist-packages/mapdamage/Rscripts/stats/runGeneral.R --args 30 10000 10 50000 0 0 1 1 0 0 1 12 results/mapdamage/molar_L35/ /usr/lib/python3/dist-packages/mapdamage/Rscripts/stats/ results/mapdamage/molar_L35/Stats_out 0 0 0 results/mapdamage/molar_L35/acgt_ratio.csv 0 0
+2026-05-17 06:05:49,198	DEBUG	mapdamage.rscript: Bayesian estimates completed in 292.449489 seconds
+2026-05-17 06:05:49,198	INFO	mapdamage.rescale: Rescaling BAM: 'results/bam_hg38/molar_L35.hg38.sorted.bam' -> 'results/mapdamage/molar_L35/molar_L35.hg38.sorted.rescaled.bam'
+2026-05-17 06:05:54,331	DEBUG	mapdamage.rescale: Rescaling completed in 5.132148 seconds
+2026-05-17 06:05:54,331	INFO	main: Successful run
+2026-05-17 06:05:54,331	DEBUG	main: Run completed in 340.340585 seconds

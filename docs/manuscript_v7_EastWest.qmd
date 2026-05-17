@@ -1,0 +1,254 @@
+---
+title: |
+  Divergent Post-Out-of-Africa Metabolic Adaptations and a Miscalibrated Clinical Reference:
+  The Evolutionary Basis of Global Type 2 Diabetes Disparities
+author:
+  - name: Emilio García-Morán
+    email: emilio.garcia.moran@uva.es
+    orcid: 0000-0002-2487-6686
+    affiliations:
+      - name: Universidad de Valladolid
+        city: Valladolid
+        country: Spain
+date: today
+date-format: "D MMMM YYYY"
+
+format:
+  pdf:
+    documentclass: article
+    classoption: [11pt, a4paper]
+    geometry:
+      - top=2.5cm
+      - bottom=2.5cm
+      - left=2.8cm
+      - right=2.8cm
+    fontfamily: libertinus
+    fontsize: 11pt
+    linestretch: 1.4
+    colorlinks: true
+    linkcolor: "2E6DA4"
+    citecolor: "2E6DA4"
+    urlcolor: "2E6DA4"
+    number-sections: true
+    toc: false
+    keep-tex: false
+    header-includes: |
+      \usepackage{fancyhdr}
+      \usepackage{booktabs}
+      \usepackage{longtable}
+      \usepackage{array}
+      \usepackage{xcolor}
+      \definecolor{mainblue}{HTML}{1A3C6B}
+      \definecolor{accentblue}{HTML}{2E6DA4}
+      \definecolor{lightgray}{HTML}{666666}
+      \hypersetup{linkcolor=accentblue,citecolor=accentblue,urlcolor=accentblue}
+      \pagestyle{fancy}
+      \fancyhf{}
+      \fancyhead[L]{\small\textit{\textcolor{lightgray}{García-Morán · Ancestral metabolic architecture and global T2D disparities}}}
+      \fancyhead[R]{\small\textcolor{lightgray}{Genome Medicine · 2026}}
+      \fancyfoot[C]{\small\textcolor{lightgray}{\thepage}}
+      \fancyfoot[L]{\small\textcolor{lightgray}{DOI: 10.5281/zenodo.19431281}}
+      \renewcommand{\headrulewidth}{0.4pt}
+      \renewcommand{\footrulewidth}{0.4pt}
+      \usepackage{titlesec}
+      \titleformat{\section}{\large\bfseries\color{mainblue}}{}{0em}{}[\titlerule]
+      \titleformat{\subsection}{\normalsize\bfseries\itshape\color{accentblue}}{}{0em}{}
+      \usepackage{abstract}
+      \renewcommand{\abstractname}{\textcolor{mainblue}{Abstract}}
+      \setlength{\absleftindent}{0pt}
+      \setlength{\absrightindent}{0pt}
+
+keywords:
+  - type 2 diabetes
+  - ancestral metabolic architecture
+  - LDHA
+  - LDHC
+  - eQTL
+  - paleogenomics
+  - Beringia
+  - Neolithic transition
+  - precision medicine
+  - admixture
+
+bibliography: references.bib
+---
+
+\thispagestyle{empty}
+
+\vspace{1cm}
+
+\begin{center}
+\textcolor{accentblue}{\textit{Target journal: Genome Medicine}}\\[0.3cm]
+\texttt{emilio.garcia.moran@uva.es} \quad · \quad ORCID: 0000-0002-2487-6686\\[0.2cm]
+\textit{Data \& code:} \url{https://github.com/EmilioGarciaMoran/EastWestDM}\\
+\textit{Zenodo DOI:} 10.5281/zenodo.19431281\\[0.2cm]
+\textcolor{lightgray}{\textit{Competing interests: None declared · Funding: None declared}}
+\end{center}
+
+\hrule
+\vspace{0.5cm}
+
+## Abstract {.unnumbered}
+
+Type 2 diabetes (T2D) disproportionately affects East Asian (EAS), admixed American (AMR), and African-ancestry populations compared to non-Finnish Europeans (NFE). We propose that this disparity reflects not differential pathology but the application of a clinical reference framework calibrated on one post-Neolithic European metabolic architecture to populations whose equally successful evolutionary trajectories diverged prior to — and were never subject to — the selective pressures that drove European metabolic remodelling.
+
+We analysed 168 Eastern and 67 Western variants from four archaic and early modern human genomes — Denisovan D17, Ust'-Ishim (~45 ka), Vindija Neandertal (~44 ka), and Ötzi (~5.3 ka) — against gnomAD v4. The ancestral NCDN variant (chr1:35,565,741) is present at ~70% in sub-Saharan African populations (San 92%, Biaka 91%), confirming African ancestral origin predating the Out-of-Africa dispersal. Vindija Neandertal already carries Western regulatory variants prior to agriculture (~44 ka), indicating that the European divergence began in pre-Neolithic temperate environments. Unadmixed Native American populations (Surui, Karitiana: 100%; Pima: 77%; Maya: 67%) and EAS (78%) carry the ancestral architecture at or above the African baseline, reflecting cold-environment enrichment during the Beringian migration (~15,000 ya). NFE Europeans carry the variant at 3% — a 23-fold reduction from the African baseline consistent with Neolithic counter-selection. A single upstream variant at chr11:18,411,103 (C>T) acts as a coordinated trans-eQTL suppressing LDHC expression across seven tissues in GTEx v8 (skeletal muscle *p* = 3.71 × 10^−64^, NES = −0.935; independent replication in eQTLGen *n* = 31,684, Z = 75.96, *p* = 3.27 × 10^−310^). SLC2A3 (GLUT3) remains invariant across 430,000 years of hominin evolution, establishing brain glucose transport as a non-negotiable evolutionary constraint. African Americans carry intermediate frequencies (ASW 49%, ACB 73%) consistent with post-colonial admixture superimposed on the African ancestral baseline. These findings reframe global T2D disparities as a consequence of a miscalibrated clinical reference standard, with immediate implications for ancestry-informed diagnostic thresholds and pharmacogenomic stratification.
+
+**Keywords:** type 2 diabetes · ancestral metabolic architecture · LDHA · LDHC · eQTL · paleogenomics · Beringia · Neolithic transition · precision medicine · admixture
+
+\hrule
+\vspace{0.3cm}
+
+## Introduction
+
+The global burden of type 2 diabetes is distributed with striking population specificity. East Asian and admixed American populations show higher prevalence, earlier onset, greater severity at equivalent body mass index, and differential response to dietary and pharmacological interventions compared to Europeans. African-ancestry populations share this elevated burden and are additionally underrepresented in genome-wide association studies and pharmacogenomic trials. The three population groups most poorly served by current clinical frameworks — EAS, AMR, and African-ancestry — thus share a common feature: systematic underperformance of risk models calibrated on European reference cohorts.
+
+The thrifty genotype hypothesis posited a single ancestral adaptation to feast-famine cycles. The thrifty phenotype hypothesis shifted causality to developmental programming. Neither framework explains the shared elevated burden across three geographically and historically distinct population groups, nor does either account for why non-Finnish Europeans — who also experienced prehistoric food scarcity — specifically do not share it.
+
+We propose a framework centred on a universal ancestral metabolic architecture — present in Africa at ~70% frequency prior to the Out-of-Africa dispersal — that subsequently diverged along two distinct post-Out-of-Africa trajectories under radically different selective pressures. The clinical consequences are a product of the encounter between these trajectories and a medical reference standard calibrated, by historical circumstance, on only one of them.
+
+The metabolic architectures documented here represent independent adaptive solutions of equivalent fitness. The European lineage, beginning with pre-agricultural Neandertals in temperate environments and consolidated by the Neolithic transition, optimised for carbohydrate processing from plant-based substrates. The Siberian and Beringian lineage optimised for maximal glycolytic efficiency under cold stress and caloric scarcity, with brain glucose supply as the inviolable constraint in both cases. The clinical problem arises not from the architectures themselves but from their encounter with a globally uniform food environment and a medical reference standard that, by historical accident, reflects only one of them.
+
+## Results
+
+### Eastern and Western variant discovery
+
+Comparison of D17 Denisovan and Ust'-Ishim (~45 ka, Siberia) genomes against gnomAD v4 identified 168 high-confidence Eastern variants after C→T/G→A damage filtering (mapDamage 2.2.1; PMDtools threshold ≥3). Comparison of Vindija Neandertal and Ötzi genomes identified 67 Western variants. Pathway analysis revealed Eastern enrichment in glycolysis regulators (PFKM, LDHA, LDHC), adipose biology (ADIPOQ, FASN), and cold thermosensation (TRPA1); Western enrichment in lipid metabolism (ACACA), thermogenesis (PPARGC1A), and plant-based nutrient processing. Eighty-six percent of Eastern variants showed symmetric polarisation toward AMR/EAS populations (Fisher *p* = 3.2 × 10^−18^), with LDHA/LDHC regulatory regions showing 21.4-fold enrichment.
+
+### SLC2A3 invariance across 430,000 years
+
+Pileup analysis of five Sima de los Huesos specimens (PRJEB10597; remapped to hg38; mean depth 1.18×) at SLC2A3 exonic and promoter positions reveals no fixed differences relative to modern humans at 11 canonical positions examined. Combined with conservation data from Vindija, D17, and Ust'-Ishim, SLC2A3 has remained functionally invariant for at least 430,000 years across hominin lineages, establishing brain glucose transport as a non-negotiable evolutionary constraint around which both metabolic architectures were independently organised.
+
+### LDHA/LDHC trans-eQTL across seven tissues
+
+GTEx v8 analysis identified chr11:18,411,103 (C>T; rs7951953) — an Eastern-specific upstream variant 1,228 bp from the LDHC transcription start site — as a coordinated trans-eQTL suppressing LDHC expression in seven tissues simultaneously (Table 1). Effect sizes ranged from NES = −0.935 (skeletal muscle) to NES = −0.620 (whole blood), all in the same negative direction. The Eastern-specific allele (C>T) is associated with lower LDHC expression in all seven tissues, consistent with a regulatory variant that suppresses LDHC transcription, shifting metabolic flux toward oxidative phosphorylation — thermogenically advantageous under cold stress, potentially impairing metabolic flexibility under caloric excess. Independent replication in eQTLGen (*n* = 31,684; Z = 75.96; *p* = 3.27 × 10^−310^) confirms this as among the most statistically robust regulatory signals in the human genome.
+
+| Tissue | *p*-value | NES | *n* |
+|---|---|---|---|
+| Skeletal muscle | 3.71 × 10^−64^ | −0.935 | 706 |
+| Subcutaneous adipose | 1.46 × 10^−59^ | −0.881 | 581 |
+| Visceral adipose | 1.11 × 10^−41^ | −0.812 | 469 |
+| Whole blood | 7.39 × 10^−30^ | −0.620 | 670 |
+| Pancreas | 7.33 × 10^−26^ | −0.751 | 305 |
+| Liver | 9.12 × 10^−24^ | −0.734 | 208 |
+| Brain cortex | 2.70 × 10^−22^ | −0.698 | 205 |
+| eQTLGen (blood) | 3.27 × 10^−310^ | Z = 75.96 | 31,684 |
+
+: LDHA/LDHC trans-eQTL across GTEx v8 tissues (chr11:18,411,103 C>T). NES: normalised effect size (negative = lower LDHC expression in Eastern allele carriers). eQTLGen: independent whole-blood replication cohort. {#tbl-eqtl}
+
+The brain cortex eQTL (*p* = 2.70 × 10^−22^) alongside SLC2A3 invariance establishes a critical dissociation: brain glucose *transport* was conserved for 430,000 years, while brain glucose *metabolism* retains population-specific regulatory variation.
+
+### Global frequency distribution: an ancestral variant with asymmetric selective history
+
+Query of the gnomAD v3.1.2 HGDP+1000G joint callset at the NCDN locus (chr1:35,565,741) revealed a global frequency distribution consistent with an ancestral allele present prior to the Out-of-Africa dispersal, subsequently subject to asymmetric selection across lineages (Table 2, Figures 5–6).
+
+Sub-Saharan African populations carry the variant at a mean frequency of 70.4% (range 49–92%), establishing the ancestral baseline. San and Biaka Pygmy populations show the highest frequencies (91.7% and 90.9% respectively), consistent with long-term maintenance of the ancestral state. EAS (78%) and unadmixed Native American populations (Surui/Karitiana: 100%; Pima: 77%; Maya: 67%) show frequencies at or above the African baseline. NFE Europeans show near-complete loss of the variant (3%). African Americans carry intermediate frequencies (ASW: 49%; ACB: 73%) consistent with variable European admixture superimposed on the African ancestral baseline. The independent replication SNP at chr1:35,542,512 shows consistent directional effect across all populations.
+
+| Population | *n* | Frequency | Selective context |
+|---|---|---|---|
+| San (Kalahari) | 12 | 92% | Ancestral African baseline |
+| Biaka Pygmy (Congo) | 44 | 91% | Ancestral African baseline |
+| Mbuti Pygmy (Congo) | 24 | 83% | Ancestral African baseline |
+| Surui (Amazonia) | 14 | 100% | Cold-environment enrichment |
+| Karitiana (Amazonia) | 20 | 100% | Cold-environment enrichment |
+| EAS (gnomAD) | 5,174 | 78% | Cold-environment enrichment |
+| Pima (N. Mexico) | 22 | 77% | Cold-environment enrichment |
+| Yoruba (Nigeria) | 40 | 70% | Ancestral African baseline |
+| ACB (African Caribbean) | 188 | 73% | Admixture dilution |
+| Maya (Mesoamerica) | 36 | 67% | Cold-environment enrichment |
+| AFR gnomAD (global) | 41,322 | 56% | Pan-African mean |
+| Peruvian (Andes) | 170 | 53% | Low European admixture |
+| ASW (African American) | 104 | 49% | Admixture dilution |
+| Mexican (MXL, 1000G) | 126 | 39% | Post-1521 European admixture |
+| AMR gnomAD | 15,244 | 31% | Post-1521 European admixture |
+| Colombian (CLM, 1000G) | 188 | 29% | Post-1521 European admixture |
+| NFE (gnomAD) | 67,976 | 3% | Neolithic counter-selection |
+
+: Global frequency of ancestral NCDN variant (chr1:35,565,741) by population. Sources: HGDP, 1000 Genomes Project, gnomAD v3.1.2. {#tbl-freq}
+
+## Discussion
+
+### Two adaptive solutions of equivalent fitness
+
+The metabolic architectures documented here represent independent evolutionary solutions of equivalent adaptive success — not differential pathology. The European lineage, beginning with pre-agricultural Neandertals in temperate environments and consolidated by the Neolithic transition, optimised for carbohydrate processing from plant-based substrates: ACACA lipogenesis, PPARGC1A thermogenesis, PPARγ adipogenesis calibrated for cereal-derived glucose. The Siberian and Beringian lineage optimised for maximal glycolytic efficiency under cold stress and caloric scarcity, with brain glucose supply as the inviolable constraint. The clinical problem arises not from the architectures themselves but from their encounter with a globally uniform food environment and a medical reference standard that, by historical accident, reflects only one of them.
+
+### The European divergence began before agriculture
+
+Vindija Neandertal (~44 ka) already carries Western regulatory variants in the absence of cereals, domesticated animals, or settled lifestyles — predating the Neolithic transition by approximately 35,000 years. The temperate European environment, characterised by moderate cold stress and reliance on megafaunal fat as caloric substrate, appears to have initiated counter-selection against the ancestral African glycolytic architecture prior to the Neolithic. The Neolithic transition accelerated a process already underway. Ötzi (5,300 ya) represents not the origin of the Western metabolic architecture but its completion.
+
+Whether the ancestral NCDN architecture was present in Sima de los Huesos hominin lineages (430 ka) and subsequently lost during the European divergence remains undetermined. Coverage at chr1:35,565,741 in SH specimens was insufficient for allelic inference (0 reads; mean genome-wide depth 1.18×). This question represents a compelling target for higher-coverage ancient European genome sequencing.
+
+### From regulatory variant to glycolytic mechanism
+
+The identification of chr11:18,411,103 (C>T) as a coordinated trans-eQTL suppressing LDHC expression across seven metabolically relevant tissues converts this population genomic observation into a tractable molecular mechanism. LDHC encodes the muscle/testis isoform of lactate dehydrogenase, catalysing the final step of anaerobic glycolysis. Its coordinated downregulation across muscle, adipose, pancreas, liver, and brain cortex — all at negative NES — is consistent with a pleiotropic regulatory programme rather than a tissue-specific effect. In calorically abundant environments, LDHC suppression shifts the pyruvate/lactate equilibrium toward oxidative phosphorylation — thermogenically advantageous under Arctic conditions, potentially impairing metabolic flexibility under caloric excess.
+
+### Regulatory ghost adaptation
+
+LDHA missense variants shared between D17 and Ust'-Ishim are absent from gnomAD v4, indicating active purifying selection on coding changes. Yet the surrounding regulatory landscape persists at high frequency across most human populations outside Europe. We term this pattern *regulatory ghost adaptation*: coding changes eliminated by purifying selection, regulatory architecture co-selected with them persisting in non-coding space, visible only through eQTL analysis. The European loss of this architecture — rather than its presence elsewhere — is the evolutionary anomaly requiring explanation.
+
+### The Beringia bottleneck: cold selection as amplifier, not origin
+
+The peopling of the Americas did not introduce a novel metabolic architecture — it exported and amplified an ancestral African one. Unadmixed Native American populations carry the Eastern NCDN variant at 67–100%, at or above the African baseline, consistent with positive selection during the Arctic crossing (~15,000 ya). The stepwise frequency reduction through populations of increasing European admixture — Peruvians (53%), Mexicans (39%), AMR gnomAD (31%), Colombians (29%) — constitutes a quantitative genomic record of post-1521 demographic change. The same dilution mechanism operates in African Americans (ASW: 49%; ACB: 73%), where post-colonial European admixture has superimposed the European low-frequency architecture on the African ancestral baseline. The ~24% frequency difference between ASW and ACB reflects differential admixture proportions, not differential selection.
+
+### Three clinically undercharacterised populations, one shared mechanism
+
+The populations most poorly served by European-calibrated clinical thresholds share a single genomic feature: they carry the ancestral metabolic architecture that Europeans specifically lost. SGLT2 inhibitors, GLP-1 receptor agonists, and thiazolidinediones were validated predominantly in European-ancestry cohorts. The LDHC trans-eQTL signal in pancreas (*p* = 7.33 × 10^−26^), skeletal muscle (*p* = 3.71 × 10^−64^), and liver (*p* = 9.12 × 10^−24^) identifies specific tissues where differential glycolytic flux may alter pharmacodynamic response. Stratification by LDHA/LDHC regulatory haplotype — rather than continental ancestry label — would recover this signal in admixed populations currently misclassified by European-reference panels. The BMI thresholds documented by Caleyachetty et al. are not arbitrary measurement failures: they are the epidemiological shadow of the evolutionary divergence documented here.
+
+### The human singularity and its metabolic price
+
+SLC2A3 invariance across 430,000 years establishes brain glucose priority as the non-negotiable constraint around which all hominin metabolic architectures were organised. The periphery adapted — differently in different lineages, under different selective pressures, across different timescales. The brain never compromised. The clinical consequence is that the organ most dependent on stable glucose supply is protected by the most conserved gene in our dataset, while the organs that regulate glucose availability — muscle, liver, pancreas, adipose — carry the full burden of evolutionary divergence.
+
+### Limitations
+
+This analysis is limited by available high-coverage archaic genomes. The conservative C→T/G→A damage filter may remove genuine variants; PMDtools-based filtering gave comparable directional results. Coverage at the NCDN locus in Sima de los Huesos specimens was insufficient for allelic inference (0 reads; mean depth 1.18×). Native American and African HGDP sample sizes are small (*n* = 12–44); replication in the PAGE study, Arctic Biobank, and Mexico City Prospective Study is required before clinical translation. The eQTLGen replication cohort consists of whole blood; however, consistency of negative NES across all seven GTEx tissues supports a pleiotropic regulatory programme. The Neolithic counter-selection hypothesis requires formal testing with time-series ancient DNA spanning the European Mesolithic-Neolithic transition. CRISPR functional validation of the LDHA/LDHC regulatory variant is needed to establish causality.
+
+## Methods
+
+### Archaic genome processing and variant calling
+
+Five Sima de los Huesos specimens (PRJEB10597; Meyer et al. 2016) were remapped to hg38 using AdapterRemoval (--qualitymax 93) → BWA-MEM (-k16) → Picard MarkDuplicates → mapDamage 2.2.1 (--rescale, MCMC). Variants were called with GATK HaplotypeCaller. D17 Denisovan, Ust'-Ishim, Vindija Neandertal, and Ötzi genomes were processed with identical parameters. C→T and G→A variants were excluded at positions with PMDtools score <3.
+
+### Population frequency analysis
+
+gnomAD v4 allele frequencies were extracted via the gnomAD REST API. Population-specific frequencies for HGDP and 1000 Genomes populations were extracted via remote bcftools query from the gnomAD v3.1.2 HGDP+TGP joint callset. Symmetric polarisation was assessed using Fisher's exact test with Bonferroni correction. African population frequencies were extracted for 15 sub-Saharan populations including deep-branching lineages (San, Biaka Pygmy, Mbuti Pygmy).
+
+### eQTL analysis
+
+GTEx v8 single-tissue eQTL data were queried for all Eastern variants within 1 Mb of LDHC (ENSG00000166796). The eQTLGen cis-eQTL dataset (2019-12-11 release; *n* = 31,684; FDR < 0.05) was queried for independent replication. Effect size direction (NES) was compared across all tissues to assess pleiotropic consistency.
+
+### SLC2A3 conservation analysis
+
+SLC2A3 exonic positions were queried in all archaic genomes using samtools mpileup (minimum base quality 20, minimum mapping quality 25). Positions covered at ≥1× depth were considered for conservation analysis.
+
+### Statistical analysis and figure generation
+
+All analyses were performed in R v4.5.2 (ggplot2, dplyr) and Python 3.11 (matplotlib, geopandas, pandas). All code is available at https://github.com/EmilioGarciaMoran/EastWestDM.
+
+## Data Availability
+
+All analysis code, variant lists, population frequency tables, and figure generation scripts are available at: <https://github.com/EmilioGarciaMoran/EastWestDM> (DOI: 10.5281/zenodo.19431281). Raw archaic genome data: PRJEB10597 (Sima de los Huesos). gnomAD: <https://gnomad.broadinstitute.org>. GTEx: <https://gtexportal.org>. eQTLGen: <https://eqtlgen.org>.
+
+## Figure Legends
+
+**Figure 1.** East-West variant frequency polarisation. 86% of Eastern variants enriched in AMR/EAS vs NFE (Fisher *p* = 3.2 × 10^−18^). Bars: proportion of Eastern (blue) and Western (red) variants in each population group.
+
+**Figure 2.** Pathway enrichment. Eastern: glycolysis (PFKM, LDHA, LDHC), adipose (ADIPOQ, FASN), cold thermosensation (TRPA1). Western: lipogenesis (ACACA), thermogenesis (PPARGC1A).
+
+**Figure 3.** SLC2A3 invariance across 430,000 years. Pileup at 11 canonical positions across five Sima de los Huesos specimens, D17, Ust'-Ishim, Vindija, Ötzi. No fixed differences observed.
+
+**Figure 4.** LDHA/LDHC trans-eQTL. Panel A: NES by tissue (GTEx v8). Panel B: eQTLGen replication (*n* = 31,684; Z = 75.96; *p* = 3.27 × 10^−310^). Panel C: regional association plot chr11:18.35–18.55 Mb.
+
+**Figure 5.** Global frequency gradient of ancestral NCDN variant (chr1:35,565,741). Bars ordered by frequency. Colours: deep-branching African (dark red), unadmixed Native American/EAS (red), admixed African American/AMR (amber), European (blue). Open circles: replication at chr1:35,542,512.
+
+**Figure 6.** World map of ancestral NCDN variant frequency. Circle size proportional to allele frequency; colour scale: blue (NFE 3%) to red (Surui/Karitiana 100%). Arrows: Out-of-Africa (~70 ka, black); Beringia cold-environment enrichment (~15 ka, dark red); Neolithic counter-selection in European lineages (~8–5 ka, blue); post-colonial admixture events (dashed grey). Source: HGDP + 1000 Genomes + gnomAD v3.1.2.
+
+---
+
+*"The periphery adapted; the brain never compromised."*
+
+---
+
+\vspace{0.5cm}
+\begin{center}
+\textcolor{lightgray}{\small EastWestDM v7.1 · García-Morán 2026 · Universidad de Valladolid · DOI: 10.5281/zenodo.19431281}
+\end{center>

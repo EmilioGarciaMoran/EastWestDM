@@ -5,13 +5,12 @@
 \PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
 %
 \documentclass[
-  11pt,
-  11pt,
-  a4paper]{article}
+  letterpaper,
+  DIV=11,
+  numbers=noendperiod]{scrartcl}
 \usepackage{xcolor}
-\usepackage[top=2.5cm,bottom=2.5cm,left=2.8cm,right=2.8cm]{geometry}
 \usepackage{amsmath,amssymb}
-\setcounter{secnumdepth}{5}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
 \usepackage{iftex}
 \ifPDFTeX
   \usepackage[T1]{fontenc}
@@ -22,7 +21,7 @@
   \defaultfontfeatures{Scale=MatchLowercase}
   \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
 \fi
-\usepackage[]{libertinus}
+\usepackage{lmodern}
 \ifPDFTeX\else
   % xetex/luatex font selection
 \fi
@@ -32,7 +31,6 @@
   \usepackage[]{microtype}
   \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
-\usepackage{setspace}
 \makeatletter
 \@ifundefined{KOMAClassName}{% if non-KOMA class
   \IfFileExists{parskip.sty}{%
@@ -108,30 +106,7 @@
  
 
 
-\usepackage{fancyhdr}
-\usepackage{booktabs}
-\usepackage{longtable}
-\usepackage{array}
-\usepackage{xcolor}
-\definecolor{mainblue}{HTML}{1A3C6B}
-\definecolor{accentblue}{HTML}{2E6DA4}
-\definecolor{lightgray}{HTML}{666666}
-\hypersetup{linkcolor=accentblue,citecolor=accentblue,urlcolor=accentblue}
-\pagestyle{fancy}
-\fancyhf{}
-\fancyhead[L]{\small\textit{\textcolor{lightgray}{García-Morán · Ancestral metabolic architecture and global T2D disparities}}}
-\fancyhead[R]{\small\textcolor{lightgray}{Genome Medicine · 2026}}
-\fancyfoot[C]{\small\textcolor{lightgray}{\thepage}}
-\fancyfoot[L]{\small\textcolor{lightgray}{DOI: 10.5281/zenodo.19431281}}
-\renewcommand{\headrulewidth}{0.4pt}
-\renewcommand{\footrulewidth}{0.4pt}
-\usepackage{titlesec}
-\titleformat{\section}{\large\bfseries\color{mainblue}}{}{0em}{}[\titlerule]
-\titleformat{\subsection}{\normalsize\bfseries\itshape\color{accentblue}}{}{0em}{}
-\usepackage{abstract}
-\renewcommand{\abstractname}{\textcolor{mainblue}{Abstract}}
-\setlength{\absleftindent}{0pt}
-\setlength{\absrightindent}{0pt}
+\KOMAoption{captions}{tableheading}
 \makeatletter
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
 \AtBeginDocument{%
@@ -183,10 +158,10 @@
 architecture, LDHA, LDHC, eQTL, paleogenomics, Beringia, Neolithic
 transition, precision medicine, admixture},
   colorlinks=true,
-  linkcolor={2E6DA4},
+  linkcolor={blue},
   filecolor={Maroon},
-  citecolor={2E6DA4},
-  urlcolor={2E6DA4},
+  citecolor={Blue},
+  urlcolor={Blue},
   pdfcreator={LaTeX via pandoc}}
 
 
@@ -199,24 +174,23 @@ Miscalibrated Clinical Reference: The Evolutionary Basis of Global Type
 \maketitle
 
 
-\setstretch{1.4}
 \thispagestyle{empty}
 
 \vspace{1cm}
 
 \begin{center}
-\textcolor{accentblue}{\textit{Target journal: Genome Medicine}}\\[0.3cm]
+\textcolor[HTML]{2E6DA4}{\textit{Target journal: Genome Medicine}}\\[0.3cm]
 \texttt{emilio.garcia.moran@uva.es} \quad · \quad ORCID: 0000-0002-2487-6686\\[0.2cm]
 \textit{Data \& code:} \url{https://github.com/EmilioGarciaMoran/EastWestDM}\\
-\textit{Zenodo DOI:} 10.5281/zenodo.19431281\\[0.2cm]
-\textcolor{lightgray}{\textit{Competing interests: None declared · Funding: None declared}}
+\textit{Zenodo DOI:} 10.5281/zenodo.20260486\\[0.2cm]
+\textcolor[HTML]{666666}{\textit{Competing interests: None declared · Funding: None declared}}
 \end{center}
 
 \hrule
 \vspace{0.5cm}
 
-\section*{Abstract}\label{abstract}
-\addcontentsline{toc}{section}{Abstract}
+\subsection*{Abstract}\label{abstract}
+\addcontentsline{toc}{subsection}{Abstract}
 
 Type 2 diabetes (T2D) disproportionately affects East Asian (EAS),
 admixed American (AMR), and African-ancestry populations compared to
@@ -264,7 +238,7 @@ precision medicine · admixture
 \hrule
 \vspace{0.3cm}
 
-\section{Introduction}\label{introduction}
+\subsection{Introduction}\label{introduction}
 
 The global burden of type 2 diabetes is distributed with striking
 population specificity. East Asian and admixed American populations show
@@ -306,9 +280,9 @@ architectures themselves but from their encounter with a globally
 uniform food environment and a medical reference standard that, by
 historical accident, reflects only one of them.
 
-\section{Results}\label{results}
+\subsection{Results}\label{results}
 
-\subsection{Eastern and Western variant
+\subsubsection{Eastern and Western variant
 discovery}\label{eastern-and-western-variant-discovery}
 
 Comparison of D17 Denisovan and Ust'-Ishim (\textasciitilde45 ka,
@@ -318,13 +292,13 @@ PMDtools threshold ≥3). Comparison of Vindija Neandertal and Ötzi
 genomes identified 67 Western variants. Pathway analysis revealed
 Eastern enrichment in glycolysis regulators (PFKM, LDHA, LDHC), adipose
 biology (ADIPOQ, FASN), and cold thermosensation (TRPA1); Western
-enrichment in lipid metabolism (ACACA), thermogenesis (PPARGC1A), and
+enrichment in lipid metabolism (ACACA), thermogenesis (PPAR$\gamma$GC1A), and
 plant-based nutrient processing. Eighty-six percent of Eastern variants
 showed symmetric polarisation toward AMR/EAS populations (Fisher
 \emph{p} = 3.2 × 10\textsuperscript{−18}), with LDHA/LDHC regulatory
 regions showing 21.4-fold enrichment.
 
-\subsection{SLC2A3 invariance across 430,000
+\subsubsection{SLC2A3 invariance across 430,000
 years}\label{slc2a3-invariance-across-430000-years}
 
 Pileup analysis of five Sima de los Huesos specimens (PRJEB10597;
@@ -336,7 +310,7 @@ for at least 430,000 years across hominin lineages, establishing brain
 glucose transport as a non-negotiable evolutionary constraint around
 which both metabolic architectures were independently organised.
 
-\subsection{LDHA/LDHC trans-eQTL across seven
+\subsubsection{LDHA/LDHC trans-eQTL across seven
 tissues}\label{ldhaldhc-trans-eqtl-across-seven-tissues}
 
 GTEx v8 analysis identified chr11:18,411,103 (C\textgreater T;
@@ -386,7 +360,7 @@ glucose \emph{transport} was conserved for 430,000 years, while brain
 glucose \emph{metabolism} retains population-specific regulatory
 variation.
 
-\subsection{Global frequency distribution: an ancestral variant with
+\subsubsection{Global frequency distribution: an ancestral variant with
 asymmetric selective
 history}\label{global-frequency-distribution-an-ancestral-variant-with-asymmetric-selective-history}
 
@@ -442,9 +416,9 @@ Colombian (CLM, 1000G) & 188 & 29\% & Post-1521 European admixture \\
 NFE (gnomAD) & 67,976 & 3\% & Neolithic counter-selection \\
 \end{longtable}
 
-\section{Discussion}\label{discussion}
+\subsection{Discussion}\label{discussion}
 
-\subsection{Two adaptive solutions of equivalent
+\subsubsection{Two adaptive solutions of equivalent
 fitness}\label{two-adaptive-solutions-of-equivalent-fitness}
 
 The metabolic architectures documented here represent independent
@@ -452,7 +426,7 @@ evolutionary solutions of equivalent adaptive success --- not
 differential pathology. The European lineage, beginning with
 pre-agricultural Neandertals in temperate environments and consolidated
 by the Neolithic transition, optimised for carbohydrate processing from
-plant-based substrates: ACACA lipogenesis, PPARGC1A thermogenesis, PPARγ
+plant-based substrates: ACACA lipogenesis, PPAR$\gamma$GC1A thermogenesis, PPAR$\gamma$γ
 adipogenesis calibrated for cereal-derived glucose. The Siberian and
 Beringian lineage optimised for maximal glycolytic efficiency under cold
 stress and caloric scarcity, with brain glucose supply as the inviolable
@@ -461,7 +435,7 @@ themselves but from their encounter with a globally uniform food
 environment and a medical reference standard that, by historical
 accident, reflects only one of them.
 
-\subsection{The European divergence began before
+\subsubsection{The European divergence began before
 agriculture}\label{the-european-divergence-began-before-agriculture}
 
 Vindija Neandertal (\textasciitilde44 ka) already carries Western
@@ -482,7 +456,7 @@ SH specimens was insufficient for allelic inference (0 reads; mean
 genome-wide depth 1.18×). This question represents a compelling target
 for higher-coverage ancient European genome sequencing.
 
-\subsection{From regulatory variant to glycolytic
+\subsubsection{From regulatory variant to glycolytic
 mechanism}\label{from-regulatory-variant-to-glycolytic-mechanism}
 
 The identification of chr11:18,411,103 (C\textgreater T) as a
@@ -499,7 +473,7 @@ oxidative phosphorylation --- thermogenically advantageous under Arctic
 conditions, potentially impairing metabolic flexibility under caloric
 excess.
 
-\subsection{Regulatory ghost
+\subsubsection{Regulatory ghost
 adaptation}\label{regulatory-ghost-adaptation}
 
 LDHA missense variants shared between D17 and Ust'-Ishim are absent from
@@ -512,7 +486,7 @@ persisting in non-coding space, visible only through eQTL analysis. The
 European loss of this architecture --- rather than its presence
 elsewhere --- is the evolutionary anomaly requiring explanation.
 
-\subsection{The Beringia bottleneck: cold selection as amplifier, not
+\subsubsection{The Beringia bottleneck: cold selection as amplifier, not
 origin}\label{the-beringia-bottleneck-cold-selection-as-amplifier-not-origin}
 
 The peopling of the Americas did not introduce a novel metabolic
@@ -530,7 +504,8 @@ the African ancestral baseline. The \textasciitilde24\% frequency
 difference between ASW and ACB reflects differential admixture
 proportions, not differential selection.
 
-\subsection{Three clinically undercharacterised populations, one shared
+\subsubsection{Three clinically undercharacterised populations, one
+shared
 mechanism}\label{three-clinically-undercharacterised-populations-one-shared-mechanism}
 
 The populations most poorly served by European-calibrated clinical
@@ -550,7 +525,7 @@ documented by Caleyachetty et al.~are not arbitrary measurement
 failures: they are the epidemiological shadow of the evolutionary
 divergence documented here.
 
-\subsection{The human singularity and its metabolic
+\subsubsection{The human singularity and its metabolic
 price}\label{the-human-singularity-and-its-metabolic-price}
 
 SLC2A3 invariance across 430,000 years establishes brain glucose
@@ -563,7 +538,7 @@ protected by the most conserved gene in our dataset, while the organs
 that regulate glucose availability --- muscle, liver, pancreas, adipose
 --- carry the full burden of evolutionary divergence.
 
-\subsection{Limitations}\label{limitations}
+\subsubsection{Limitations}\label{limitations}
 
 This analysis is limited by available high-coverage archaic genomes. The
 conservative C→T/G→A damage filter may remove genuine variants;
@@ -580,9 +555,9 @@ time-series ancient DNA spanning the European Mesolithic-Neolithic
 transition. CRISPR functional validation of the LDHA/LDHC regulatory
 variant is needed to establish causality.
 
-\section{Methods}\label{methods}
+\subsection{Methods}\label{methods}
 
-\subsection{Archaic genome processing and variant
+\subsubsection{Archaic genome processing and variant
 calling}\label{archaic-genome-processing-and-variant-calling}
 
 Five Sima de los Huesos specimens (PRJEB10597; Meyer et al.~2016) were
@@ -593,7 +568,7 @@ Vindija Neandertal, and Ötzi genomes were processed with identical
 parameters. C→T and G→A variants were excluded at positions with
 PMDtools score \textless3.
 
-\subsection{Population frequency
+\subsubsection{Population frequency
 analysis}\label{population-frequency-analysis}
 
 gnomAD v4 allele frequencies were extracted via the gnomAD REST API.
@@ -604,7 +579,7 @@ test with Bonferroni correction. African population frequencies were
 extracted for 15 sub-Saharan populations including deep-branching
 lineages (San, Biaka Pygmy, Mbuti Pygmy).
 
-\subsection{eQTL analysis}\label{eqtl-analysis}
+\subsubsection{eQTL analysis}\label{eqtl-analysis}
 
 GTEx v8 single-tissue eQTL data were queried for all Eastern variants
 within 1 Mb of LDHC (ENSG00000166796). The eQTLGen cis-eQTL dataset
@@ -612,7 +587,7 @@ within 1 Mb of LDHC (ENSG00000166796). The eQTLGen cis-eQTL dataset
 queried for independent replication. Effect size direction (NES) was
 compared across all tissues to assess pleiotropic consistency.
 
-\subsection{SLC2A3 conservation
+\subsubsection{SLC2A3 conservation
 analysis}\label{slc2a3-conservation-analysis}
 
 SLC2A3 exonic positions were queried in all archaic genomes using
@@ -620,23 +595,23 @@ samtools mpileup (minimum base quality 20, minimum mapping quality 25).
 Positions covered at ≥1× depth were considered for conservation
 analysis.
 
-\subsection{Statistical analysis and figure
+\subsubsection{Statistical analysis and figure
 generation}\label{statistical-analysis-and-figure-generation}
 
 All analyses were performed in R v4.5.2 (ggplot2, dplyr) and Python 3.11
 (matplotlib, geopandas, pandas). All code is available at
 https://github.com/EmilioGarciaMoran/EastWestDM.
 
-\section{Data Availability}\label{data-availability}
+\subsection{Data Availability}\label{data-availability}
 
 All analysis code, variant lists, population frequency tables, and
 figure generation scripts are available at:
 \url{https://github.com/EmilioGarciaMoran/EastWestDM} (DOI:
-10.5281/zenodo.19431281). Raw archaic genome data: PRJEB10597 (Sima de
+10.5281/zenodo.20260486). Raw archaic genome data: PRJEB10597 (Sima de
 los Huesos). gnomAD: \url{https://gnomad.broadinstitute.org}. GTEx:
 \url{https://gtexportal.org}. eQTLGen: \url{https://eqtlgen.org}.
 
-\section{Figure Legends}\label{figure-legends}
+\subsection{Figure Legends}\label{figure-legends}
 
 \textbf{Figure 1.} East-West variant frequency polarisation. 86\% of
 Eastern variants enriched in AMR/EAS vs NFE (Fisher \emph{p} = 3.2 ×
@@ -645,7 +620,7 @@ Eastern variants enriched in AMR/EAS vs NFE (Fisher \emph{p} = 3.2 ×
 
 \textbf{Figure 2.} Pathway enrichment. Eastern: glycolysis (PFKM, LDHA,
 LDHC), adipose (ADIPOQ, FASN), cold thermosensation (TRPA1). Western:
-lipogenesis (ACACA), thermogenesis (PPARGC1A).
+lipogenesis (ACACA), thermogenesis (PPAR$\gamma$GC1A).
 
 \textbf{Figure 3.} SLC2A3 invariance across 430,000 years. Pileup at 11
 canonical positions across five Sima de los Huesos specimens, D17,
@@ -679,7 +654,7 @@ grey). Source: HGDP + 1000 Genomes + gnomAD v3.1.2.
 \vspace{0.5cm}
 
 \textbackslash begin\{center\}
-\textcolor{lightgray}{\small EastWestDM v7.1 · García-Morán 2026 · Universidad de Valladolid · DOI: 10.5281/zenodo.19431281}
+\textcolor[HTML]{666666}{\small EastWestDM v7.1 · García-Morán 2026 · Universidad de Valladolid · DOI: 10.5281/zenodo.20260486}
 \textbackslash end\{center\textgreater{}
 
 

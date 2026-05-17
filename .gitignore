@@ -60,3 +60,6 @@ data/PanTHERIA_1-0_WR05_Aug2008.txt
 act2/yn00_results/ckpt_final.json
 act2/yn00_results/checkpoint_yn00.json
 act2/yn00_results/dnds_yn00_raw.csv
+act3/eqtlgen_cis.txt.gz
+act3/*.tiff
+act3/figure6_world_map_v*.png
